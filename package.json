@@ -1,0 +1,34 @@
+{
+  "name": "beast-casper-agent-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Beast AI Agent Gateway — Multi-agent coordination on Casper Network via x402 micropayments",
+  "workspaces": [
+    "packages/core",
+    "packages/gateway",
+    "packages/mcp-server",
+    "packages/agent-sdk"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "gateway": "npm run start -w @beast/agent-gateway",
+    "mcp": "npm run start -w @beast/casper-mcp-server",
+    "demo:fleet": "npm run demo:fleet -w @beast/agent-sdk",
+    "demo:marketplace": "npm run demo:marketplace -w @beast/agent-sdk"
+  },
+  "keywords": [
+    "casper",
+    "x402",
+    "ai-agent",
+    "multi-agent",
+    "defi",
+    "mcp",
+    "blockchain",
+    "web3"
+  ],
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

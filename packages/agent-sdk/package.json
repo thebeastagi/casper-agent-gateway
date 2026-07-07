@@ -1,0 +1,21 @@
+{
+  "name": "@beast/agent-sdk",
+  "version": "0.1.0",
+  "description": "SDK for connecting AI agents to the Beast Agent Gateway on Casper Network",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "demo:fleet": "ts-node examples/fleet-coordination.ts",
+    "demo:services": "ts-node examples/service-marketplace.ts"
+  },
+  "dependencies": {
+    "@beast/casper-x402": "0.1.0",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

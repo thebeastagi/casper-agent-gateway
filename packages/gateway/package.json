@@ -1,0 +1,23 @@
+{
+  "name": "@beast/agent-gateway",
+  "version": "0.1.0",
+  "description": "x402-protected API Gateway for AI agent services on Casper Network",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "@beast/casper-x402": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/express": "^4.17.0",
+    "@types/cors": "^2.8.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

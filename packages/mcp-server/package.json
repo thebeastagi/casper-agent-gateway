@@ -1,0 +1,20 @@
+{
+  "name": "@beast/casper-mcp-server",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for Casper Network — gives AI agents direct blockchain access",
+  "main": "dist/server.js",
+  "bin": {
+    "beast-casper-mcp": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.0.0"
+  }
+}
