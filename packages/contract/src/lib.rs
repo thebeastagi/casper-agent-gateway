@@ -15,6 +15,68 @@
 
 extern crate alloc;
 
+/// Minimal wasm runtime shims (allocator + panic handler).
+///
+/// `casper-contract` is used with `default-features = false`, which drops its
+/// nightly-only `no-std-helpers` (wee_alloc). These ~30 lines replace them and
+/// let the contract build on current stable Rust.
+#[cfg(all(target_arch = "wasm32", not(test)))]
+mod wasm_runtime {
+    use core::alloc::{GlobalAlloc, Layout};
+    use core::cell::UnsafeCell;
+
+    const WASM_PAGE_SIZE: usize = 65536;
+
+    /// Single-threaded bump allocator backed by `memory.grow`.
+    struct BumpAlloc {
+        next: UnsafeCell<usize>,
+    }
+
+    // Safety: wasm contract execution is single-threaded.
+    unsafe impl Sync for BumpAlloc {}
+
+    #[global_allocator]
+    static ALLOCATOR: BumpAlloc = BumpAlloc {
+        next: UnsafeCell::new(0),
+    };
+
+    unsafe impl GlobalAlloc for BumpAlloc {
+        unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+            let next = self.next.get();
+            let mut cursor = *next;
+            if cursor == 0 {
+                cursor = core::arch::wasm32::memory_size::<0>() * WASM_PAGE_SIZE;
+            }
+            let aligned = match cursor.checked_add(layout.align() - 1) {
+                Some(v) => v & !(layout.align() - 1),
+                None => return core::ptr::null_mut(),
+            };
+            let end = match aligned.checked_add(layout.size()) {
+                Some(v) => v,
+                None => return core::ptr::null_mut(),
+            };
+            let available = core::arch::wasm32::memory_size::<0>() * WASM_PAGE_SIZE;
+            if end > available {
+                let needed_pages = (end - available).div_ceil(WASM_PAGE_SIZE);
+                if core::arch::wasm32::memory_grow::<0>(needed_pages) == usize::MAX {
+                    return core::ptr::null_mut();
+                }
+            }
+            *next = end;
+            aligned as *mut u8
+        }
+
+        unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {
+            // Bump allocator: memory is reclaimed when the wasm instance ends.
+        }
+    }
+
+    #[panic_handler]
+    fn panic(_info: &core::panic::PanicInfo) -> ! {
+        core::arch::wasm32::unreachable()
+    }
+}
+
 use alloc::format;
 use alloc::string::String;
 use alloc::vec;

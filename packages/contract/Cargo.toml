@@ -5,7 +5,10 @@ edition = "2021"
 description = "Beast AI Agent Registry — on-chain identity and reputation for autonomous AI agents on Casper Network"
 
 [dependencies]
-casper-contract = "1.4.4"
+# default-features = false drops the crate's nightly-only helpers (wee_alloc era);
+# we provide our own minimal wasm allocator + panic handler in src/lib.rs,
+# which lets the contract build on a current stable toolchain.
+casper-contract = { version = "1.4.4", default-features = false }
 casper-types = "1.5.0"
 
 [lib]
@@ -15,3 +18,7 @@ crate-type = ["cdylib"]
 opt-level = "z"
 lto = true
 codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+panic = "abort"
