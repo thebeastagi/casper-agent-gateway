@@ -21,7 +21,7 @@ import {
   ServiceRequest,
   ServiceResponse,
 } from '@beast/casper-x402';
-import { x402Middleware, X402MiddlewareConfig } from './middleware';
+import { x402Middleware, withSettlement, X402MiddlewareConfig } from './middleware';
 
 // === Configuration ===
 
@@ -84,8 +84,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Apply x402 middleware globally
+// Apply x402 middleware globally: verify the payment, then attach an on-chain
+// settlement receipt to successful responses on paid routes (matches the
+// documented 402 → pay → 200 + settlement flow).
 app.use(x402Middleware(paymentConfig));
+app.use(withSettlement(paymentConfig));
 
 // === Routes ===
 
@@ -264,12 +267,16 @@ app.post('/api/v1/defi/stake', (req, res) => {
 
 // === Start Server ===
 
-app.listen(PORT, () => {
-  console.log(`🦁 Beast AI Agent Gateway running on port ${PORT}`);
-  console.log(`   Network: Casper Testnet`);
-  console.log(`   RPC: ${CASPER_RPC}`);
-  console.log(`   x402: Enabled (${Object.keys(paymentConfig.routes).length} paid endpoints)`);
-  console.log(`   Free endpoints: ${paymentConfig.freeRoutes?.join(', ')}`);
-});
+// Only bind the port when run directly (`node dist/server.js`), so the app can
+// be imported into tests without occupying port 3456.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🦁 Beast AI Agent Gateway running on port ${PORT}`);
+    console.log(`   Network: Casper Testnet`);
+    console.log(`   RPC: ${CASPER_RPC}`);
+    console.log(`   x402: Enabled (${Object.keys(paymentConfig.routes).length} paid endpoints)`);
+    console.log(`   Free endpoints: ${paymentConfig.freeRoutes?.join(', ')}`);
+  });
+}
 
 export default app;

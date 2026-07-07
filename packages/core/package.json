@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
-    "lint": "eslint src/"
+    "test": "node --test test/*.test.js",
+    "lint": "tsc --noEmit"
   },
   "keywords": ["x402", "casper", "payment", "ai-agent", "micropayments"],
   "license": "Apache-2.0",

@@ -79,8 +79,19 @@ export class CasperX402Facilitator {
       return { valid: false, reason: `Network mismatch: ${payment.network} vs ${requirement.network}` };
     }
 
-    // 4. Check amount (must be at least the required amount)
-    if (BigInt(payment.amount) < BigInt(requirement.amount)) {
+    // 4. Check amount (must be at least the required amount).
+    // Parse defensively: the payload is attacker-controlled, so a non-integer
+    // amount (e.g. "abc", "1e9") must yield a clean rejection rather than an
+    // unhandled BigInt() throw that would surface as an HTTP 500.
+    let paidAmount: bigint;
+    let requiredAmount: bigint;
+    try {
+      paidAmount = BigInt(payment.amount);
+      requiredAmount = BigInt(requirement.amount);
+    } catch {
+      return { valid: false, reason: `Invalid payment amount: ${payment.amount}` };
+    }
+    if (paidAmount < requiredAmount) {
       return { valid: false, reason: `Insufficient payment: ${payment.amount} < ${requirement.amount}` };
     }
 
@@ -89,9 +100,14 @@ export class CasperX402Facilitator {
       return { valid: false, reason: 'Wrong recipient address' };
     }
 
-    // 6. Check timestamp (within 5 minute window)
+    // 6. Check timestamp (within 5 minute window). Coerce defensively so a
+    // non-numeric timestamp cannot slip through the age check as NaN.
+    const timestamp = Number(payment.timestamp);
+    if (!Number.isFinite(timestamp)) {
+      return { valid: false, reason: 'Invalid payment timestamp' };
+    }
     const now = Math.floor(Date.now() / 1000);
-    const ageSec = now - payment.timestamp;
+    const ageSec = now - timestamp;
     if (Math.abs(ageSec) > 300) {
       return { valid: false, reason: `Payment expired (age: ${ageSec}s, max: 300s)` };
     }

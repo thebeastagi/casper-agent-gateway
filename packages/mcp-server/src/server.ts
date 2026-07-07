@@ -45,7 +45,7 @@ async function casperRpcCall(method: string, params: Record<string, unknown> = {
 
 // === Tool Definitions ===
 
-const tools: Tool[] = [
+export const tools: Tool[] = [
   {
     name: 'GetAccountBalance',
     description: 'Get the CSPR balance for a Casper account. Returns total balance, staked amount, and available balance.',
@@ -376,10 +376,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools,
 }));
 
-// Handle tool calls
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
-
+/** Dispatch a tool call by name. Exported so tests and other callers can
+ *  exercise the tool handlers directly without the stdio transport. */
+export async function handleToolCall(name: string, args: any) {
   switch (name) {
     case 'GetAccountBalance':
       return handleGetAccountBalance(args);
@@ -396,6 +395,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
+}
+
+// Handle tool calls
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+  return handleToolCall(name, args);
 });
 
 // Start server with stdio transport
@@ -407,4 +412,6 @@ async function main() {
   console.error('   Tools: GetAccountBalance, QueryAgentRegistry, GetTransactionStatus, GetNetworkStats, ExecuteTransfer, QueryDeFiPool');
 }
 
-main().catch(console.error);
+if (require.main === module) {
+  main().catch(console.error);
+}

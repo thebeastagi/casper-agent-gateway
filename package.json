@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
+    "pretest": "npm run build",
+    "test": "node --test packages/core/test/*.test.js packages/gateway/test/*.test.js packages/mcp-server/test/*.test.js packages/agent-sdk/test/*.test.js",
     "gateway": "npm run start -w @beast/agent-gateway",
     "mcp": "npm run start -w @beast/casper-mcp-server",
     "demo:fleet": "npm run demo:fleet -w @beast/agent-sdk",

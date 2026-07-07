@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
+    "test": "node --test test/*.test.js",
     "dev": "ts-node src/server.ts"
   },
   "dependencies": {

@@ -6,7 +6,8 @@
  */
 
 import * as nacl from 'tweetnacl';
-import { createHash, randomBytes } from 'crypto';
+import { blake2b } from 'blakejs';
+import { randomBytes } from 'crypto';
 
 /** A Casper keypair (Ed25519) */
 export interface CasperKeypair {
@@ -100,9 +101,8 @@ export function createPaymentHash(payload: {
     payload.nonce,
   ].join(':');
   
-  // Blake2b-256 hash (Casper's native hashing)
-  const hash = createHash('sha256').update(preimage).digest();
-  return new Uint8Array(hash);
+  // Blake2b-256 hash — Casper's native hashing scheme (via blakejs).
+  return blake2b(Buffer.from(preimage, 'utf-8'), undefined, 32);
 }
 
 /** Generate a unique nonce */
