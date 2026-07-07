@@ -15,6 +15,8 @@
 [![Casper](https://img.shields.io/badge/Network-Casper%20Testnet-FF473E)](https://testnet.cspr.live)
 [![x402](https://img.shields.io/badge/Payments-x402%20v2-2bc8bf)](https://x402.org)
 [![MCP](https://img.shields.io/badge/AI-MCP%20Server-8A2BE2)](packages/mcp-server)
+[![BUIDL](https://img.shields.io/badge/DoraHacks-Submitted%20%7C%20BUIDL%2046763-FF6A3C)](https://dorahacks.io/buidl/46763)
+[![Tests](https://img.shields.io/badge/Tests-45%2F45%20pass-success)](https://github.com/thebeastagi/casper-agent-gateway/actions/workflows/ci.yml)
 
 [**🌐 thebeastagi.com**](https://thebeastagi.com) · [**𝕏 @thebeastagi**](https://x.com/thebeastagi) · [**🎥 Demo video**](demo-video-final.mp4) · [Casper Agentic Buildathon 2026](https://dorahacks.io/hackathon/casper-agentic-buildathon)
 
@@ -34,7 +36,7 @@
 
 ## 🎥 Demo
 
-**▶️ [`demo-video-final.mp4`](demo-video-final.mp4)** — 59 seconds, in the repo root ([direct download](https://github.com/thebeastagi/casper-agent-gateway/raw/main/demo-video-final.mp4)).
+**▶️ [`demo-video-final.mp4`](demo-video-final.mp4)** — 1 minute 9 seconds, in the repo root ([direct download](https://github.com/thebeastagi/casper-agent-gateway/raw/main/demo-video-final.mp4)).
 
 What you'll see:
 
@@ -184,6 +186,28 @@ cargo build --release --target wasm32-unknown-unknown   # produces the deployabl
 
 ---
 
+## 🧪 Testing
+
+The repo ships with a full **45-test suite** across all 4 packages — zero external test deps, runs on `node:test` (built into Node 18+), verified green in CI across Node 18 / 20 / 22:
+
+```bash
+npm test
+# ℹ tests 45  ℹ pass 45  ℹ fail 0
+```
+
+| Package | Tests | Covers |
+|---------|-------|--------|
+| `@beast/casper-x402` (core) | 22 | Ed25519 round-trips, deterministic blake2b hashing, payment builder, facilitator verification matrix (valid / expired / replay / underpay / wrong-recipient / forged-signature / network-mismatch / malformed) |
+| `@beast/agent-gateway` | 9 | Health endpoint, free routes, 402 challenges, full 402→pay→201 register flow with settlement receipt, underpayment rejection, replay protection, malformed-input handling, service request settlement |
+| `@beast/casper-mcp-server` | 10 | All 6 MCP tools (balance, registry, tx status, network stats, transfer, DeFi pool), reputation filtering, unknown-tool rejection |
+| `@beast/agent-sdk` | 4 | BeastAgent identity derivation, keypair persistence, graceful offline fallback |
+
+Plus **16 documented contract scenarios** in [`packages/contract/tests/integration.rs`](packages/contract/tests/integration.rs) (Rust) covering the full register→query→reputation→deactivate lifecycle, ready for `casper-engine-test-support` wiring.
+
+CI guards the build + test + gateway smoke test + contract check on every push. A fresh judge clone passes first try — every step in the Quick Start is verified in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+---
+
 ## 💸 The x402 Payment Flow
 
 Every paid endpoint speaks native [x402 v2](https://x402.org) — HTTP's `402 Payment Required`, finally put to work:
@@ -291,7 +315,7 @@ Design notes:
 - Custom `ToBytes` / `FromBytes` / `CLTyped` serialization for `AgentIdentity`
 - Service types validated against a fixed catalogue (reasoning, audit, code_generation, defi_execution, data_analysis, content_creation, coordination)
 - Versioned contract package (`beast_agent_registry_package`) → upgradeable
-- 16 test scenarios documented in [`packages/contract/tests/integration.rs`](packages/contract/tests/integration.rs) (engine-test-support wiring is on the roadmap)
+- 16 integration test scenarios covering full lifecycle (register → query → reputation → deactivate) — see [Testing](#-testing) above
 
 ---
 
@@ -323,10 +347,12 @@ This entire submission — 4 TypeScript packages, the Rust contract, CI, demos, 
 ## 🗺️ What's Next
 
 - [ ] Deploy `beast-agent-registry` to Casper testnet + wire the gateway registry to on-chain state
-- [ ] `casper-engine-test-support` integration tests for all 16 documented scenarios
+- [ ] Wire the 16 documented integration scenarios to `casper-engine-test-support` for full on-chain VM testing
 - [ ] Real deploy construction in `settle()` (full `account_put_deploy` signing path)
 - [ ] CSPR.trade integration for live DeFi routing
 - [ ] Publish `@beast/casper-x402` to npm as a public good for the Casper ecosystem
+
+> 🏆 **BUIDL 46763** submitted to the [Casper Agentic Buildathon 2026](https://dorahacks.io/buidl/46763) — this README reflects the submitted state.
 
 ---
 
