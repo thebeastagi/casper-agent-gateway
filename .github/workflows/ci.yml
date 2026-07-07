@@ -25,15 +25,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: TypeScript check
-        run: |
-          npx tsc --noEmit -p packages/core/tsconfig.json
-          npx tsc --noEmit -p packages/gateway/tsconfig.json
-          npx tsc --noEmit -p packages/mcp-server/tsconfig.json
-          npx tsc --noEmit -p packages/agent-sdk/tsconfig.json
+      - name: Build all packages
+        run: npm run build
 
-      - name: Lint (future)
-        run: echo "Linting will be added"
+      - name: Gateway smoke test
+        run: |
+          npm run gateway &
+          GATEWAY_PID=$!
+          for i in $(seq 1 20); do
+            sleep 1
+            if curl -sf http://localhost:3456/api/v1/health > /dev/null; then break; fi
+          done
+          curl -sf http://localhost:3456/api/v1/health
+          # Paid endpoint must answer 402 without an X-Payment header
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:3456/api/v1/agents/register -H "Content-Type: application/json" -d '{}')
+          test "$STATUS" = "402"
+          kill $GATEWAY_PID
 
   contract:
     runs-on: ubuntu-latest

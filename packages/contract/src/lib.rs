@@ -8,7 +8,7 @@
 //! - Discover agents for autonomous service matching
 //!
 //! This contract powers the Beast AI Agent Gateway's on-chain coordination layer.
-//! Written against `casper-contract` 1.4.4 / `casper-types` 1.6.0.
+//! Written against `casper-contract` 1.4.4 / `casper-types` 1.5.0.
 
 #![no_std]
 #![no_main]

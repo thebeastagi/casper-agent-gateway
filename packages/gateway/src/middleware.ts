@@ -12,7 +12,7 @@ import {
   CasperX402Facilitator,
   PaymentRequirement,
   PaymentRequiredResponse,
-} from '../../core/src/index';
+} from '@beast/casper-x402';
 
 /** Configuration for the x402 middleware */
 export interface X402MiddlewareConfig {

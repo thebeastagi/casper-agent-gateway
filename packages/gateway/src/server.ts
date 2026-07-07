@@ -20,7 +20,7 @@ import {
   AgentIdentity,
   ServiceRequest,
   ServiceResponse,
-} from '../../core/src/index';
+} from '@beast/casper-x402';
 import { x402Middleware, X402MiddlewareConfig } from './middleware';
 
 // === Configuration ===

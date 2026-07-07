@@ -6,7 +6,7 @@
  * service discovery, and on-chain coordination.
  */
 
-export { AgentServiceType } from '../../core/src/index';
+export { AgentServiceType } from '@beast/casper-x402';
 import {
   CasperX402Client,
   CasperKeypair,
@@ -17,7 +17,7 @@ import {
   AgentIdentity,
   AgentServiceType,
   PaymentRequirement,
-} from '../../core/src/index';
+} from '@beast/casper-x402';
 
 // === Types ===
 
@@ -199,7 +199,23 @@ export class BeastAgent {
         }
       }
 
-      return await response.json() as ServiceResult;
+      const data = await response.json() as {
+        requestId: string;
+        result?: Record<string, unknown>;
+        settlementTx: string;
+        x402Payment?: { amount?: string };
+      };
+
+      // Normalize the gateway response (provider details are nested in `result`)
+      const result = data.result ?? {};
+      return {
+        providerId: (result.providerId as string) ?? '',
+        providerName: (result.providerName as string) ?? 'unknown',
+        requestId: data.requestId,
+        result,
+        settlementTx: data.settlementTx,
+        cost: data.x402Payment?.amount ?? '0',
+      };
     } catch (error) {
       console.error('Service request failed:', error);
       return null;
