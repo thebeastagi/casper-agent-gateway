@@ -15,7 +15,7 @@
     "gateway": "npm run start -w @beast/agent-gateway",
     "mcp": "npm run start -w @beast/casper-mcp-server",
     "demo:fleet": "npm run demo:fleet -w @beast/agent-sdk",
-    "demo:marketplace": "npm run demo:marketplace -w @beast/agent-sdk"
+    "demo:marketplace": "npm run demo:services -w @beast/agent-sdk"
   },
   "keywords": [
     "casper",
