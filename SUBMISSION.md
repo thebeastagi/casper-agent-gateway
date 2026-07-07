@@ -21,10 +21,10 @@ project_description=The Beast AI Agent Gateway is the first production-grade mul
 tracks=Agentic AI,DeFi,Real-World Assets
 
 # Technologies
-technologies=Casper Network,x402 Protocol,MCP (Model Context Protocol),TypeScript,Rust (Odra),Express.js,Node.js,Ed25519
+technologies=Casper Network,x402 Protocol,MCP (Model Context Protocol),TypeScript,Rust (casper-contract),Express.js,Node.js,Ed25519
 
 # Video
-video_url=[TO BE ADDED — screen recording]
+video_url=https://github.com/thebeastagi/casper-agent-gateway/raw/main/demo-video-final.mp4
 
 # Demo
 demo_url=https://github.com/thebeastagi/casper-agent-gateway

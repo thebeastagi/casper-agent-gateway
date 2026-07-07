@@ -51,3 +51,6 @@ playwright-report/
 tmp/
 temp/
 *.tmp
+# Draft demo videos (final video is demo-video-final.mp4)
+demo-video.mp4
+demo-video-v2.mp4
