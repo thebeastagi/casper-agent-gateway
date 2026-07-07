@@ -44,7 +44,7 @@ async function main() {
   });
 
   // Service pricing (in CSPR, via x402)
-  const pricing = {
+  const pricing: Record<string, { amount: string; display: string }> = {
     'audit': { amount: '200000000', display: '0.2 CSPR' },
     'code-generation': { amount: '200000000', display: '0.2 CSPR' },
     'data-analysis': { amount: '150000000', display: '0.15 CSPR' },

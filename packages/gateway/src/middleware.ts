@@ -12,7 +12,7 @@ import {
   CasperX402Facilitator,
   PaymentRequirement,
   PaymentRequiredResponse,
-} from '@beast/casper-x402';
+} from '../../core/src/index';
 
 /** Configuration for the x402 middleware */
 export interface X402MiddlewareConfig {
@@ -93,7 +93,7 @@ export function withSettlement(config: X402MiddlewareConfig) {
     const originalJson = res.json.bind(res);
     res.json = function (body: any) {
       // Attempt settlement (non-blocking for demo)
-      config.facilitator.settle(payment, requirement).then((settlement) => {
+      config.facilitator.settle(payment, requirement).then((settlement: any) => {
         if (settlement.success) {
           body.x402Settlement = {
             transactionHash: settlement.transactionHash,

@@ -6,6 +6,7 @@
  * service discovery, and on-chain coordination.
  */
 
+export { AgentServiceType } from '../../core/src/index';
 import {
   CasperX402Client,
   CasperKeypair,
@@ -16,7 +17,7 @@ import {
   AgentIdentity,
   AgentServiceType,
   PaymentRequirement,
-} from '@beast/casper-x402';
+} from '../../core/src/index';
 
 // === Types ===
 
